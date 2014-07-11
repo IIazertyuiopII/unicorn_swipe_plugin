@@ -16,10 +16,10 @@
         touchMoveEvent = supportTouch ? "touchmove" : "mousemove",
         touchEndEvent = supportTouch ? "touchend" : "mouseup";
 
-    var path;
-    var derived_path;
-    var segs;
-    var seg_quadrant;
+    var path;  //array of coordinates of the points where the touchMoveEvent was fired 
+    var derived_path; 
+    var segs; 
+    var seg_quadrant; 
     var max_freqs;
     var start;
     var stop;
@@ -33,7 +33,7 @@
         var event = document.createEvent("Event");
 
         event.initEvent("unicorn", true, true);
-        for (var p in eventProperties) { /* useful in case we want to pass more than the route */
+        for (var p in eventProperties) { // useful in case we want to pass more than the route (future versions maybe?)
             if (eventProperties.hasOwnProperty(p)) {
                 event[p] = eventProperties[p];
             }
@@ -83,7 +83,7 @@
     }
 
     function handleTouchEnd(event) {
-
+    	
         var l = path.length;
         var min_length = 8; // min length is to have enough points to perform consistent recognition
         var fire = false;
@@ -125,33 +125,33 @@
                 return a - b;
             };
             for (var i = 0; i <= l - min_length; ++i) {
-                segs[i].sort(diff); /* sorting to count duplicates more easily */
+                segs[i].sort(diff); // sorting to count duplicates more easily 
                 var previous = segs[i][0];
                 var popular = segs[i][0];
                 var count = 1;
                 var max_count = 1;
 
                 for (var j = 1; j < 8; j++) {
-                    if (segs[i][j] == previous) { /* if current = previous then increment occurrence count */
+                    if (segs[i][j] == previous) { // if current = previous then increment occurrence count 
                         count++;
                     } else {
-                        if (count > max_count) { /* if occurrence count exceeds previous max save it */
+                        if (count > max_count) { // if occurrence count exceeds previous max save it 
                             popular = segs[i][j - 1];
                             max_count = count;
                         };
                         previous = segs[i][j];
                         count = 1;
                     };
-                    var pop = count > max_count ? segs[i][min_length - 3] : popular; /* handle case where the last element is the most frequent */
+                    var pop = count > max_count ? segs[i][min_length - 3] : popular; // handle case where the last element is the most frequent 
                     var cnt = count > max_count ? count : max_count;
-                    max_freqs[i] = [pop, cnt]; /* max_freqs contains the popular segment direction and its number of occurrences */
+                    max_freqs[i] = [pop, cnt]; // max_freqs contains the popular segment direction and its number of occurrences 
                 }
             }
 
             /*########## STEP 4 : Eliminate segments with unclear overall direction ##########*/
 
-            var min_number_of_max = 5; /* only segments where the most frequent value is present this many times or more are kept */
-            for (var i = max_freqs.length - 1; i >= 0; i--) { /* to ensure the segment has a clearly defined direction */
+            var min_number_of_max = 5; // only segments where the most frequent value is present this many times or more are kept 
+            for (var i = max_freqs.length - 1; i >= 0; i--) { // to ensure the segment has a clearly defined direction 
                 if (max_freqs[i][1] <= min_number_of_max) {
                     max_freqs.splice(i, 1);
                     seg_quadrant.splice(i, 1);
@@ -162,12 +162,12 @@
 
             var previous = max_freqs[max_freqs.length - 1];
             var previous_type = seg_quadrant[max_freqs.length - 1];
-            for (var i = max_freqs.length - 2; i >= 0; i--) { /* remove duplicates */
-                if (previous[0] === max_freqs[i][0]) { /* same direction */
-                    if ((previous_type[0] === seg_quadrant[i][0]) && (previous_type[1] === seg_quadrant[i][1]) /* same diagonal */ 
-                    || Math.abs(max_freqs[i][0]) > 500 /* same vertical */ 
-                    || (max_freqs[i][0] === 0 && previous_type[0] === seg_quadrant[i][0])) { /* same horizontal */
-                        if (previous[1] > max_freqs[i][1]) { /* keep the duplicate with the greater max */
+            for (var i = max_freqs.length - 2; i >= 0; i--) { 
+            	if (previous[0] === max_freqs[i][0]) { // same direction 
+                    if ((previous_type[0] === seg_quadrant[i][0]) && (previous_type[1] === seg_quadrant[i][1]) // same diagonal 
+                    		|| Math.abs(max_freqs[i][0]) > 500 /* same vertical */ 
+                    		|| (max_freqs[i][0] === 0 && previous_type[0] === seg_quadrant[i][0])) { // same horizontal 
+                        if (previous[1] > max_freqs[i][1]) { // keep the duplicate with the greater max 
                             max_freqs.splice(i, 1);
                             seg_quadrant.splice(i, 1);
                         } else {
@@ -187,15 +187,15 @@
                 var p_i = max_freqs[i][0];
                 var t_x_i = seg_quadrant[i][0];
                 var t_y_i = seg_quadrant[i][1];
-                route[i] = p_i == -1000 ? "N" : p_i == 1000 ? "S" : p_i === 0 ?
-                (t_x_i > 0 ? "E" : "W") : p_i == -1 ? 
-                (t_y_i > 0 ? "NE" : "SW") : (t_y_i > 0 ? "NW" : "SE");
+                route[i] = p_i == -1000 ? "N" : p_i == 1000 ? "S" : p_i === 0 ? 
+                		(t_x_i > 0 ? "E" : "W") : p_i == -1 ? 
+                		(t_y_i > 0 ? "NE" : "SW") : (t_y_i > 0 ? "NW" : "SE");
             }
             if (i !== 0) {
                 fire = true;
             };
         }
-        if (fire) {
+        if (fire) { 
             dispatch({
                 route: route
             });
