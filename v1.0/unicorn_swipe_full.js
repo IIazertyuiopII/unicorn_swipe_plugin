@@ -41,7 +41,7 @@
         document.dispatchEvent(event);
     }
 
-    function handleTouchStart(event) {
+    function handleTouchStart(event) { //init the Arrays, record starting position and time
         var position = getPosition(event);
 
         path = [];
@@ -75,7 +75,7 @@
             coords: position
         };
 
-        if (event.touches && event.touches.length > 1) {
+        if (event.touches && event.touches.length > 1) { //if multitouch event abort everything
             start = stop = false;
         }
 
