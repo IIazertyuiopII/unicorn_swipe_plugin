@@ -34,4 +34,4 @@ Just like desktop apps have keyboard shortcuts, I believe mobile apps should hav
 
 The route property of the event is passed an array in the following format : [firstDirection,secondDirection,...]. For exemple, it could look like : [N,W,E,SW].
 
-_Note : I guess the route could be processed during the move event instead of waiting for the end to gain some performance, but I have never found the processing to take more than 5ms, there is no real need for that.._
+_Note : I guess the route could be processed during the move event instead of waiting for the end to gain some performance, but since I have never found the processing to take more than 5ms, there is no real need for that.._
