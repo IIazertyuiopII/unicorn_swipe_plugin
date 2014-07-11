@@ -23,7 +23,7 @@
     var max_freqs;
     var start;
     var stop;
-
+    var n;
     function getPosition(event) {
         return [event.pageX, event.pageY];
     }
@@ -46,21 +46,14 @@
 
         path = [];
         derived_path = [];
-        segs = [
-            []
-        ];
-        seg_quadrant = [
-            []
-        ];
-        max_freqs = [
-            []
-        ];
+        segs = [];
+        seg_quadrant = [];
+        max_freqs = [];
         start = {
-            time: +new Date(),
-            coords: position,
-            origin: event.target
+            time: +new Date()
         };
-        path = [position];
+        n = 0;
+        path[n] = position;
     }
 
     function handleTouchMove(event) {
@@ -71,8 +64,7 @@
             return;
         }
         stop = {
-            time: +new Date(),
-            coords: position
+            time: +new Date()
         };
 
         if (event.touches && event.touches.length > 1) { //if multitouch event abort everything
@@ -80,7 +72,8 @@
         	start = stop = false;
         }
 
-        path.push(position);
+        n++;
+        path[n] = position;
     }
 
     function handleTouchEnd(event) {
@@ -104,19 +97,19 @@
             /*########## STEP 2 : Create sub-paths(segments) and classify them in one of the four xy quadrants ##########*/
 
             for (var i = 0; i <= l - min_length; ++i) {
-                segs[i] = derived_path.slice(i, i + min_length - 2); /* create sub-paths of min_length-2 points */
+                segs[i] = derived_path.slice(i, i + min_length - 2); /* create sub-paths of min_length-2 points */ 
                 seg_quadrant[i] = [0, 0]; /* the segments are classified in one of the four quadrants */
-                if (path[i + 7][1] < path[i][1]) {
+                if (path[i + min_length-2][1] < path[i+1][1]) {
                     seg_quadrant[i][1] = 1;
                 };
-                if (path[i + 7][1] > path[i][1]) {
+                if (path[i + min_length-2][1] > path[i+1][1]) {
                     seg_quadrant[i][1] = -1;
                 };
-                if (path[i + 7][0] > path[i][0]) {
-                    seg_quadrant[i][0] = 1;
+                if (path[i + min_length-2][0] > path[i+1][0]) {
+                    seg_quadrant[i][0] = 1; 
                 };
-                if (path[i + 7][0] < path[i][0]) {
-                    seg_quadrant[i][0] = -1;
+                if (path[i + min_length-2][0] < path[i+1][0]) {
+                    seg_quadrant[i][0] = -1; 
                 };
             }
 
@@ -192,7 +185,7 @@
                 		(t_x_i > 0 ? "E" : "W") : p_i == -1 ? 
                 		(t_y_i > 0 ? "NE" : "SW") : (t_y_i > 0 ? "NW" : "SE");
             }
-            if (i !== 0) {
+            if (i !== 0) { 
                 fire = true;
             };
         }
