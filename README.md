@@ -15,7 +15,7 @@ Just like desktop apps have keyboard shortcuts, I believe mobile apps should hav
 <li> jQuery users : 
 
 $(document).on('unicorn', function(event){ 
-var route = event.originalEvemt.route;
+var route = event.originalEvent.route;
 //enter code here
 });</li>
 
