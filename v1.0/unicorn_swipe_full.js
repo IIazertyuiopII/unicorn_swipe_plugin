@@ -164,7 +164,9 @@
             var previous_type = seg_quadrant[max_freqs.length - 1];
             for (var i = max_freqs.length - 2; i >= 0; i--) { /* remove duplicates */
                 if (previous[0] === max_freqs[i][0]) { /* same direction */
-                    if ((previous_type[0] === seg_quadrant[i][0]) && (previous_type[1] === seg_quadrant[i][1]) /* same diagonal */ || Math.abs(max_freqs[i][0]) > 500 /* same vertical */ || (max_freqs[i][0] === 0 && previous_type[0] === seg_quadrant[i][0])) { /* same horizontal */
+                    if ((previous_type[0] === seg_quadrant[i][0]) && (previous_type[1] === seg_quadrant[i][1]) /* same diagonal */ 
+                    || Math.abs(max_freqs[i][0]) > 500 /* same vertical */ 
+                    || (max_freqs[i][0] === 0 && previous_type[0] === seg_quadrant[i][0])) { /* same horizontal */
                         if (previous[1] > max_freqs[i][1]) { /* keep the duplicate with the greater max */
                             max_freqs.splice(i, 1);
                             seg_quadrant.splice(i, 1);
@@ -185,7 +187,9 @@
                 var p_i = max_freqs[i][0];
                 var t_x_i = seg_quadrant[i][0];
                 var t_y_i = seg_quadrant[i][1];
-                route[i] = p_i == -1000 ? "N" : p_i == 1000 ? "S" : p_i === 0 ? (t_x_i > 0 ? "E" : "W") : p_i == -1 ? (t_y_i > 0 ? "NE" : "SW") : (t_y_i > 0 ? "NW" : "SE");
+                route[i] = p_i == -1000 ? "N" : p_i == 1000 ? "S" : p_i === 0 ?
+                (t_x_i > 0 ? "E" : "W") : p_i == -1 ? 
+                (t_y_i > 0 ? "NE" : "SW") : (t_y_i > 0 ? "NW" : "SE");
             }
             if (i !== 0) {
                 fire = true;
