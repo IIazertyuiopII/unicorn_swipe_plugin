@@ -24,12 +24,13 @@ var route = event.originalEvent.route;
 
 <li> Vanilla javascript : <br>
 
-````
+```
 addEventListener('unicorn', function (event) { 
 var route = event.route;
 //enter code here
 });
 ```
 </li>
-<li>The route property which is passed is an array in the following format : [firstDirection,secondDirection,...], so it could look like [N,W,E,SW].</li>
+
+The route property of the event is passed an array in the following format : [firstDirection,secondDirection,...]. For exemple, it could look like : [N,W,E,SW].</li>
 </ul>
