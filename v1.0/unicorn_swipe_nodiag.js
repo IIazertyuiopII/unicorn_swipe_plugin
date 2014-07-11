@@ -1,5 +1,5 @@
 /*jshint -W032 */
-/*jshint -W004 */
+/*jshint -W004 */ 
 // jquerymobile-unicorn_swipe
 // ----------------------------------
 // Copyright (c)2012 Donnovan Lewis
