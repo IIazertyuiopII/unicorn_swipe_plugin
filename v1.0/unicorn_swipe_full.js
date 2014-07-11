@@ -76,7 +76,8 @@
         };
 
         if (event.touches && event.touches.length > 1) { //if multitouch event abort everything
-            start = stop = false;
+        	removeEventListener(touchMoveEvent, handleTouchMove);
+        	start = stop = false;
         }
 
         path.push(position);
@@ -87,7 +88,7 @@
         var l = path.length;
         var min_length = 8; // min length is to have enough points to perform consistent recognition
         var fire = false;
-
+        if(!stop && !start){addEventListener(touchMoveEvent, handleTouchMove);}
         if (l > min_length && stop && start && stop.time - start.time < 10000) { // otherwise do nothing 
 
             /*########## STEP 1 : Compute and smoothen the derived path ##########*/
