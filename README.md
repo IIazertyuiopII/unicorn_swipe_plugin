@@ -12,19 +12,19 @@ Just like desktop apps have keyboard shortcuts, I believe mobile apps should hav
 
 <h3> How to use it: </h3>
 <ul>
-<li> jQuery users : 
+<li> jQuery users : <br>
 
-$(document).on('unicorn', function(event){ 
+`$(document).on('unicorn', function(event){ 
 var route = event.originalEvent.route;
 //enter code here
-});</li>
+});`</li>
 
-<li> Vanilla javascript : 
+<li> Vanilla javascript : <br>
 
-addEventListener('unicorn', function (event) { 
+`addEventListener('unicorn', function (event) { 
 var route = event.route;
 //enter code here
-});
+});`
 </li>
 <li>The route property which is passed is an array in the following format : [firstDirection,secondDirection,...], so it could look like [N,W,E,SW].</li>
 </ul>
