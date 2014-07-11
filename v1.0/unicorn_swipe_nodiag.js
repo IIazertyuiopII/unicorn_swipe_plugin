@@ -38,7 +38,7 @@
                 event[p] = eventProperties[p];
             }
         }
-        document.dispatchEvent(event);
+        start.origin.dispatchEvent(event);
     }
 
     function handleTouchStart(event) { //init the Arrays, record starting position and time
@@ -50,7 +50,8 @@
         seg_xhalf = [];
         max_freqs = [];
         start = {
-            time: +new Date()
+            time: +new Date(),
+            origin: event.target
         };
         n = 0;
         path[n] = position;
