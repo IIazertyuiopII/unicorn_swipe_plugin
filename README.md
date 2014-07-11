@@ -14,22 +14,22 @@ Just like desktop apps have keyboard shortcuts, I believe mobile apps should hav
 <ul>
 <li> jQuery users : <br>
 
-```
-$(document).on('unicorn', function(event){ 
-var route = event.originalEvent.route;
-//enter code here
-});
-```
+
+    $(document).on('unicorn', function(event){ 
+    var route = event.originalEvent.route;
+    //enter your code here
+    });
+
 </li>
 
 <li> Vanilla javascript : <br>
 
-```
-addEventListener('unicorn', function (event) { 
-var route = event.route;
-//enter code here
-});
-```
+
+    addEventListener('unicorn', function (event) { 
+    var route = event.route;
+    //enter code here
+    });
+
 </li>
 
 The route property of the event is passed an array in the following format : [firstDirection,secondDirection,...]. For exemple, it could look like : [N,W,E,SW].</li>
