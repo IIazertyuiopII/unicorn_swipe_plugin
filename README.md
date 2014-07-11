@@ -15,20 +15,20 @@ Just like desktop apps have keyboard shortcuts, I believe mobile apps should hav
 * jQuery users : <br>
 
 
-	$(document).on('unicorn', function(event){ 
-	var route = event.originalEvent.route;
-	//enter your code here
-	});
+				$(document).on('unicorn', function(event){ 
+				var route = event.originalEvent.route;
+				//enter your code here
+				});
 
 
 
 * Vanilla javascript : <br>
 
 
-    addEventListener('unicorn', function (event) { 
-    var route = event.route;
-    //enter code here
-    });
+				    addEventListener('unicorn', function (event) { 
+				    var route = event.route;
+				    //enter code here
+				    });
 
 
 
