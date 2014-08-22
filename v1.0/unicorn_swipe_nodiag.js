@@ -86,12 +86,13 @@
     	if (!stop) {
             return;
         }
-        var l = path.length;
+    	var l = path.length;
         var touchrate = 1000 * l / (stop.time - start.time);
-        var adj_min_length =  8 + Math.round(touchrate/20) - 1;
+        var length_adj =  Math.round(touchrate/20) - 1;
         
-        var min_length = l > adj_min_length ? adj_min_length : 8; // min length is to have enough points to perform consistent recognition
+        var min_length = l > 7 + length_adj ? 7 + length_adj : 7;  // min length is to have enough points to perform consistent recognition
         
+        console.warn(l+'/'+min_length);
         
         if (l > min_length && stop.time - start.time < 10000) { // otherwise do nothing 
 
@@ -113,10 +114,10 @@
                     segs[i] = derived_path.slice(i, i + min_length); /* create sub-paths of min_length points (because of derivation) */
                     seg_xhalf[i] = [0];
 
-                    if (path[i + min_length - 1][0] > path[i][0]) {
+                    if (path[i + min_length - 1][0] > path[i + 1][0]) {
                         seg_xhalf[i] = 1;
                     };
-                    if (path[i + min_length - 1][0] <= path[i][0]) {  /* bad fix for the horizontal segments issue */
+                    if (path[i + min_length - 1][0] <= path[i + 1][0]) {
                         seg_xhalf[i] = -1;
                     };
                 }
@@ -146,7 +147,7 @@
                             previous = segs[i][j];
                             count = 1;
                         };
-                        var pop = count > max_count ? segs[i][min_length - 1] : popular; // handle case where the last element is the most frequent 
+                        var pop = count > max_count ? segs[i][min_length - 2] : popular; // handle case where the last element is the most frequent 
                         var cnt = count > max_count ? count : max_count;
                         max_freqs[i] = [pop, cnt]; // max_freqs contains the popular segment direction and its number of occurrences 
                     }
@@ -174,8 +175,8 @@
                 var previous_type = seg_xhalf[max_freqs.length - 1];
                 for (var i = max_freqs.length - 2; i >= 0; i--) {
                     if (previous[0] === max_freqs[i][0]) { // same direction 
-                        if ( (Math.abs(max_freqs[i][0]) > 500) /* same vertical */ 
-                        		|| (max_freqs[i][0] === 0 && previous_type === seg_xhalf[i]) ) { // same horizontal 
+                        if (Math.abs(max_freqs[i][0]) > 500 /* same vertical */ 
+                        		|| (max_freqs[i][0] === 0 && previous_type === seg_xhalf[i])) { // same horizontal 
                             if (previous[1] > max_freqs[i][1]) { // keep the duplicate with the greater max 
                                 max_freqs.splice(i, 1);
                                 seg_xhalf.splice(i, 1);
