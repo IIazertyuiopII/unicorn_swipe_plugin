@@ -86,11 +86,13 @@
     	if (!stop) {
             return;
         }
-        var l = path.length;
+    	var l = path.length;
         var touchrate = 1000 * l / (stop.time - start.time);
-        var adj_min_length =  8 + Math.round(touchrate/20) - 1;
+        var length_adj =  Math.round(touchrate/20) - 1;
         
-        var min_length = l > adj_min_length ? adj_min_length : 8; // min length is to have enough points to perform consistent recognition
+        var min_length = l > 7 + length_adj ? 7 + length_adj : 7;  // min length is to have enough points to perform consistent recognition
+        
+        console.warn(l+'/'+min_length);
         
         if (l > min_length && stop.time - start.time < 10000) { // otherwise do nothing 
 
@@ -99,9 +101,9 @@
                 for (var i = 0; i < l - 1; ++i) {
                     var d_i = (path[i + 1][1] - path[i][1]) / (path[i + 1][0] - path[i][0]);
                     var x_sig_i = path[i + 1][0] - path[i][0] < 0 ? -1 : 1;
-                    derived_path[i] = d_i == Infinity ? 1000 : d_i == -Infinity ? -1000 : d_i > 4 ? 1000 * x_sig_i : d_i < -4 ? -1000 * x_sig_i // vertical moves 
-                        : d_i >= -4 && d_i <= -0.25 ? -1 : d_i >= 0.25 && d_i <= 4 ? 1 // diagonal moves 
-                        : Math.abs(d_i) < 0.25 ? 0 : d_i; // horizontal moves 
+                    derived_path[i] = d_i == Infinity ? 1000 : d_i == -Infinity ? -1000 : d_i > 3 ? 1000 * x_sig_i : d_i < -3 ? -1000 * x_sig_i // vertical moves 
+                        : d_i >= -3 && d_i <= -0.5 ? -1 : d_i >= 0.5 && d_i <= 3 ? 1 // diagonal moves 
+                        : Math.abs(d_i) < 0.5 ? 0 : d_i; // horizontal moves 
                 };
             };
 
@@ -113,23 +115,22 @@
                 for (var i = 0; i < l - min_length; ++i) {
                     segs[i] = derived_path.slice(i, i + min_length); /* create sub-paths of min_length points (because of derivation) */
                     seg_quadrant[i] = [0, 0]; /* the segments are classified in one of the four quadrants */
-                    if (path[i + min_length - 1][1] < path[i][1]) {
+                    if (path[i + min_length - 1][1] < path[i + 1][1]) {
                         seg_quadrant[i][1] = 1;
                     };
-                    if (path[i + min_length - 1][1] > path[i][1]) {
+                    if (path[i + min_length - 1][1] > path[i + 1][1]) {
                         seg_quadrant[i][1] = -1;
                     };
-                    if (path[i + min_length - 1][0] > path[i][0]) {
+                    if (path[i + min_length - 1][0] > path[i + 1][0]) {
                         seg_quadrant[i][0] = 1;
                     };
-                    if (path[i + min_length - 1][0] <= path[i][0]) { /* bad fix for the horizontal segments issue */
+                    if (path[i + min_length - 1][0] <= path[i + 1][0]) {
                         seg_quadrant[i][0] = -1;
                     };
                 }
             };
 
             generate_segments();
-            
             /*########## STEP 3 : Find the most frequent direction in every segment ##########*/
 
             var diff = function (a, b) {
@@ -156,7 +157,7 @@
                             previous = segs[i][j];
                             count = 1;
                         };
-                        var pop = count > max_count ? segs[i][min_length - 1] : popular; // handle case where the last element is the most frequent 
+                        var pop = count > max_count ? segs[i][min_length - 2] : popular; // handle case where the last element is the most frequent 
                         var cnt = count > max_count ? count : max_count;
                         max_freqs[i] = [pop, cnt]; // max_freqs contains the popular segment direction and its number of occurrences 
                     }
@@ -164,7 +165,6 @@
             };
 
             find_popular();
-            
             /*########## STEP 4 : Eliminate segments with unclear overall direction ##########*/
 
             var min_number_of_max = min_length - 3; // only segments where the most frequent value is present this many times or more are kept 
@@ -185,9 +185,9 @@
                 var previous_type = seg_quadrant[max_freqs.length - 1];
                 for (var i = max_freqs.length - 2; i >= 0; i--) {
                     if (previous[0] === max_freqs[i][0]) { // same direction 
-                        if ( (previous_type[0] === seg_quadrant[i][0] && previous_type[1] === seg_quadrant[i][1]) // same diagonal 
-                            || (Math.abs(max_freqs[i][0]) > 500) /* same vertical */ 
-                            || (max_freqs[i][0] === 0 && previous_type[0] === seg_quadrant[i][0]) ) { // same horizontal 
+                        if ((previous_type[0] === seg_quadrant[i][0]) && (previous_type[1] === seg_quadrant[i][1]) // same diagonal 
+                            || Math.abs(max_freqs[i][0]) > 500 /* same vertical */ 
+                            || (max_freqs[i][0] === 0 && previous_type[0] === seg_quadrant[i][0])) { // same horizontal 
                             if (previous[1] > max_freqs[i][1]) { // keep the duplicate with the greater max 
                                 max_freqs.splice(i, 1);
                                 seg_quadrant.splice(i, 1);
@@ -212,7 +212,6 @@
                     var p_i = max_freqs[i][0];
                     var t_x_i = seg_quadrant[i][0];
                     var t_y_i = seg_quadrant[i][1];
-                	
                     route[i] = p_i == -1000 ? "N" : p_i == 1000 ? "S" : p_i === 0 ?
                         (t_x_i > 0 ? "E" : "W") : p_i == -1 ?
                         (t_y_i > 0 ? "NE" : "SW") : (t_y_i > 0 ? "NW" : "SE");
