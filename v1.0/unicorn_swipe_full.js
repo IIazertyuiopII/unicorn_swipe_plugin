@@ -43,7 +43,7 @@
     }
 
     function handleTouchStart(event) { //init the Arrays, record starting position and time
-        var position = getPosition(event);
+        var position = event.touches ? getPosition(event.touches[0]) : getPosition(event);
 
         path = [];
         derived_path = [];
