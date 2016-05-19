@@ -55,7 +55,6 @@
             origin: event.target
         };
         n = 0;
-        path[n] = position;
     }
 
     function handleTouchMove(event) {
@@ -73,9 +72,8 @@
             removeEventListener(touchMoveEvent, handleTouchMove);
             start = stop = false;
         }
-
-        n++;
         path[n] = position;
+        n++;
     }
 
     function handleTouchEnd(event) {
@@ -92,7 +90,7 @@
         
         var min_length = l > 7 + length_adj ? 7 + length_adj : 7;  // min length is to have enough points to perform consistent recognition
         
-        console.warn(l+'/'+min_length);
+        //console.warn(l+'/'+min_length);
         
         if (l > min_length && stop.time - start.time < 10000) { // otherwise do nothing 
 
@@ -172,6 +170,9 @@
 
                 for (var i = max_freqs.length - 1; i >= 0; i--) { // to ensure the segment has a clearly defined direction 
                     if (max_freqs[i][1] <= min_number_of_max) {
+                        max_freqs.splice(i, 1);
+                        seg_quadrant.splice(i, 1);
+                    } else if ( (max_freqs[i][0] === -1 && (seg_quadrant[i][0] !== seg_quadrant[i][1])) || (max_freqs[i][0] === 1 && (seg_quadrant[i][0] === seg_quadrant[i][1])) ) { //diagonal case
                         max_freqs.splice(i, 1);
                         seg_quadrant.splice(i, 1);
                     };
